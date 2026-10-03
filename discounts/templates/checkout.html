@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block title %}Checkout — Discount Management System{% endblock %}
+
+{% block extra_style %}
+    body {
+        background: radial-gradient(circle at 15% 10%, #e8edfb, transparent 45%),
+                    radial-gradient(circle at 85% 90%, #eef1fa, transparent 45%),
+                    #f4f5f9;
+    }
+
+    .page {
+        max-width: 480px;
+        margin: 56px auto;
+        padding: 0 20px;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 18px;
+        border: 1px solid #edeef4;
+        box-shadow: 0 20px 45px rgba(20, 30, 60, 0.1);
+        padding: 36px;
+    }
+
+    .card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #273a6b, #3454a8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 16px;
+    }
+
+    .card h2.title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #161e33;
+        margin: 0 0 4px;
+    }
+
+    .card p.subtitle {
+        font-size: 13px;
+        color: #8992a6;
+        margin: 0 0 26px;
+    }
+
+    label {
+        display: block;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #4a5468;
+        margin: 16px 0 6px;
+    }
+
+    label:first-of-type { margin-top: 0; }
+
+    /* Plain text/number fields (Coupon Code, Quantity) */
+    .plain-input {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px solid #e4e6ef;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 14px;
+        background: #fbfbfd;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .plain-input:focus {
+        outline: none;
+        border-color: #3454a8;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(52, 84, 168, 0.1);
+    }
+
+    /* Order Total: prefix + input sharing one bordered box */
+    .input-group {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid #e4e6ef;
+        border-radius: 9px;
+        background: #fbfbfd;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .input-group:focus-within {
+        border-color: #3454a8;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(52, 84, 168, 0.1);
+    }
+
+    .input-group .prefix {
+        padding-left: 14px;
+        color: #9aa2b4;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 11px 14px 11px 8px;
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        background: linear-gradient(135deg, #273a6b, #3454a8);
+        color: #fff;
+        padding: 13px;
+        margin-top: 26px;
+        border: none;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 14.5px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(39, 58, 107, 0.28);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button[type="submit"]:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px rgba(39, 58, 107, 0.36);
+    }
+
+    button[type="submit"]:active { transform: translateY(0); }
+
+    .result-box {
+        margin-top: 24px;
+        padding: 18px 20px;
+        border-radius: 12px;
+        font-size: 13.5px;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-box.success { background: #e4f7ee; border: 1px solid #c8ecd9; }
+    .result-box.error { background: #fdecea; border: 1px solid #f5c6c1; }
+
+    .result-box .message { font-weight: 600; margin: 0 0 10px; }
+    .result-box.success .message { color: #1c8a5a; }
+    .result-box.error .message { color: #c0392b; }
+
+    .result-box .row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: #4a5468;
+        padding: 4px 0;
+    }
+
+    .result-box .row span:last-child { font-weight: 600; color: #273a6b; }
+{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="card">
+        <div class="card-icon">%</div>
+        <h2 class="title">Apply a Discount</h2>
+        <p class="subtitle">Enter your order details and coupon code.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <label for="order_total">Order Total</label>
+            <div class="input-group">
+                <span class="prefix">₹</span>
+                <input type="number" step="0.01" name="order_total" required>
+            </div>
+
+            <label for="coupon_code">Coupon Code</label>
+            <input type="text" name="coupon_code" class="plain-input" placeholder="e.g. SAVE20">
+
+            <label for="quantity">Quantity</label>
+            <input type="number" name="quantity" min="1" value="1" class="plain-input">
+
+            <button type="submit">Apply Discount</button>
+        </form>
+
+        {% if result %}
+            <div class="result-box {% if result.valid %}success{% else %}error{% endif %}">
+                <p class="message">{{ result.message }}</p>
+                <div class="row"><span>Discount Amount</span><span>{{ result.discount_amount }}</span></div>
+                <div class="row"><span>Final Total</span><span>{{ result.final_price }}</span></div>
+                {% if result.category %}
+                    <div class="row"><span>Category</span><span>{{ result.category }}</span></div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

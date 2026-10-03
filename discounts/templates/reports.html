@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block title %}Reports — Discount Management System{% endblock %}
+
+{% block extra_style %}
+    .page {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+        color: #1c2541;
+    }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 24px; font-weight: 700; margin: 0 0 6px; color: #161e33; }
+    .page-header p { font-size: 13.5px; color: #8992a6; margin: 0; }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 20px 22px;
+        box-shadow: 0 10px 25px rgba(20, 30, 60, 0.06);
+        border: 1px solid #edeef4;
+    }
+
+    .stat-card .label {
+        font-size: 12px; font-weight: 600; color: #8992a6;
+        text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px;
+    }
+
+    .stat-card .value { font-size: 28px; font-weight: 700; color: #273a6b; }
+    .stat-card.accent-green .value { color: #1c8a5a; }
+    .stat-card.accent-red .value { color: #c0392b; }
+
+    .section {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #edeef4;
+        box-shadow: 0 10px 25px rgba(20, 30, 60, 0.06);
+        margin-bottom: 28px;
+        overflow: hidden;
+    }
+
+    .section-header {
+        padding: 18px 22px;
+        border-bottom: 1px solid #f0f1f6;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .section-header h2 { font-size: 15.5px; font-weight: 700; margin: 0; color: #161e33; }
+    .section-header .count-chip {
+        font-size: 11.5px; font-weight: 600; color: #273a6b;
+        background: #eef1fa; padding: 3px 10px; border-radius: 20px;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    th {
+        text-align: left; font-size: 11.5px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.3px; color: #9aa2b4;
+        padding: 10px 22px; background: #fafbfd; border-bottom: 1px solid #f0f1f6;
+    }
+
+    td {
+        padding: 13px 22px; font-size: 13.5px; color: #3a4356;
+        border-bottom: 1px solid #f5f6fa;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .badge {
+        display: inline-block; padding: 3px 10px; border-radius: 20px;
+        font-size: 11px; font-weight: 600;
+    }
+    .badge.active { background: #e4f7ee; color: #1c8a5a; }
+    .badge.expired { background: #fdecea; color: #c0392b; }
+    .badge.inactive { background: #f1f2f7; color: #8992a6; }
+
+    .progress-track {
+        width: 100px; height: 6px; background: #eef0f6; border-radius: 4px;
+        overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 8px;
+    }
+    .progress-fill { height: 100%; background: #3454a8; border-radius: 4px; }
+    .usage-text { font-size: 12px; color: #8992a6; vertical-align: middle; }
+
+    .empty-row td {
+        text-align: center; color: #aab0bf; font-style: italic; padding: 24px;
+    }
+{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>Reports &amp; Analytics</h1>
+        <p>Live overview of discount rules and coupon usage.</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card accent-green">
+            <div class="label">Active Discounts</div>
+            <div class="value">{{ active_rules|length }}</div>
+        </div>
+        <div class="stat-card accent-red">
+            <div class="label">Expired Discounts</div>
+            <div class="value">{{ expired_rules|length }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Coupons</div>
+            <div class="value">{{ coupons|length }}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h2>Active Discount Rules</h2>
+            <span class="count-chip">{{ active_rules|length }}</span>
+        </div>
+        <table>
+            <tr><th>Name</th><th>Category</th><th>Type</th><th>Value</th><th>Valid Until</th></tr>
+            {% for rule in active_rules %}
+            <tr>
+                <td>{{ rule.name }}</td>
+                <td>{{ rule.get_discount_category_display }}</td>
+                <td>{{ rule.get_discount_type_display }}</td>
+                <td>{{ rule.discount_value }}</td>
+                <td>{{ rule.valid_to }}</td>
+            </tr>
+            {% empty %}
+            <tr class="empty-row"><td colspan="5">No active discounts right now.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h2>Expired Discount Rules</h2>
+            <span class="count-chip">{{ expired_rules|length }}</span>
+        </div>
+        <table>
+            <tr><th>Name</th><th>Category</th><th>Type</th><th>Value</th><th>Expired On</th></tr>
+            {% for rule in expired_rules %}
+            <tr>
+                <td>{{ rule.name }}</td>
+                <td>{{ rule.get_discount_category_display }}</td>
+                <td>{{ rule.get_discount_type_display }}</td>
+                <td>{{ rule.discount_value }}</td>
+                <td><span class="badge expired">{{ rule.valid_to }}</span></td>
+            </tr>
+            {% empty %}
+            <tr class="empty-row"><td colspan="5">No expired discounts yet.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h2>Coupon Usage</h2>
+            <span class="count-chip">{{ coupons|length }}</span>
+        </div>
+        <table>
+            <tr><th>Code</th><th>Linked Rule</th><th>Usage</th><th>Status</th></tr>
+            {% for coupon in coupons %}
+            <tr>
+                <td>{{ coupon.code }}</td>
+                <td>{{ coupon.discount_rule.name }}</td>
+                <td>
+                    <span class="progress-track">
+                        <span class="progress-fill" style="width: {% widthratio coupon.times_used coupon.usage_limit 100 %}%;"></span>
+                    </span>
+                    <span class="usage-text">{{ coupon.times_used }} / {{ coupon.usage_limit }}</span>
+                </td>
+                <td>
+                    {% if coupon.is_active %}
+                        <span class="badge active">Active</span>
+                    {% else %}
+                        <span class="badge inactive">Inactive</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr class="empty-row"><td colspan="4">No coupons created yet.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

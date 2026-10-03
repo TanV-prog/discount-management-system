@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}Offers — Discount Management System{% endblock %}
+
+{% block extra_style %}
+    body {
+        background: radial-gradient(circle at 15% 10%, #e8edfb, transparent 45%),
+                    radial-gradient(circle at 85% 90%, #eef1fa, transparent 45%),
+                    #f4f5f9;
+    }
+
+    .page { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 24px; font-weight: 700; margin: 0 0 6px; color: #161e33; }
+    .page-header p { font-size: 13.5px; color: #8992a6; margin: 0; }
+
+    .offer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 18px;
+    }
+
+    .offer-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #edeef4;
+        box-shadow: 0 14px 30px rgba(20, 30, 60, 0.07);
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .offer-badge {
+        display: inline-block;
+        align-self: flex-start;
+        background: #eef1fa;
+        color: #273a6b;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+    }
+
+    .offer-value {
+        font-size: 26px;
+        font-weight: 800;
+        color: #161e33;
+        margin: 0 0 4px;
+    }
+
+    .offer-name {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #4a5468;
+        margin: 0 0 14px;
+    }
+
+    .offer-meta {
+        font-size: 12px;
+        color: #8992a6;
+        line-height: 1.7;
+        margin-bottom: 16px;
+        flex-grow: 1;
+    }
+
+    .offer-code-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fafbfd;
+        border: 1px dashed #d8dce8;
+        border-radius: 9px;
+        padding: 9px 12px;
+    }
+
+    .offer-code {
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        font-size: 14px;
+        color: #273a6b;
+        letter-spacing: 0.5px;
+    }
+
+    .offer-copy-btn {
+        background: #273a6b;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .offer-copy-btn:hover { background: #1c2b52; }
+    .offer-copy-btn.copied { background: #1c8a5a; }
+
+    .empty-state {
+        text-align: center;
+        color: #aab0bf;
+        font-style: italic;
+        padding: 60px 20px;
+    }
+{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="page-header">
+        <h1>Current Offers</h1>
+        <p>Active, usable coupons right now — tap a code to copy it.</p>
+    </div>
+
+    {% if offers %}
+        <div class="offer-grid">
+            {% for coupon in offers %}
+                <div class="offer-card">
+                    <span class="offer-badge">{{ coupon.discount_rule.get_discount_category_display }}</span>
+                    {% if coupon.discount_rule.discount_type == 'percentage' %}
+                        <p class="offer-value">{{ coupon.discount_rule.discount_value }}% OFF</p>
+                    {% else %}
+                        <p class="offer-value">₹{{ coupon.discount_rule.discount_value }} OFF</p>
+                    {% endif %}
+                    <p class="offer-name">{{ coupon.discount_rule.name }}</p>
+                    <div class="offer-meta">
+                        {% if coupon.discount_rule.category %}Category: {{ coupon.discount_rule.category.name }}<br>{% endif %}
+                        {% if coupon.discount_rule.min_order_value %}Min order: ₹{{ coupon.discount_rule.min_order_value }}<br>{% endif %}
+                        {% if coupon.discount_rule.min_quantity %}Min quantity: {{ coupon.discount_rule.min_quantity }}<br>{% endif %}
+                        Valid until {{ coupon.discount_rule.valid_to }}
+                    </div>
+                    <div class="offer-code-row">
+                        <span class="offer-code">{{ coupon.code }}</span>
+                        <button class="offer-copy-btn" onclick="copyCode(this, '{{ coupon.code }}')">Copy</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">No active offers right now — check back soon.</div>
+    {% endif %}
+</div>
+
+<script>
+function copyCode(btn, code) {
+    navigator.clipboard.writeText(code).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = original;
+            btn.classList.remove('copied');
+        }, 1500);
+    });
+}
+</script>
+{% endblock %}

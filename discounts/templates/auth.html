@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discount Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f4f5f9;
+        padding: 24px;
+    }
+
+    .shell {
+        width: 100%;
+        max-width: 880px;
+        min-height: 560px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: #fff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 30px 60px rgba(20, 30, 60, 0.12);
+    }
+
+    .brand-panel {
+        background: linear-gradient(160deg, #1c2541 0%, #273a6b 55%, #3454a8 100%);
+        color: #fff;
+        padding: 48px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .brand-panel::before {
+        content: '';
+        position: absolute;
+        width: 340px;
+        height: 340px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+        top: -120px;
+        right: -120px;
+    }
+
+    .brand-panel::after {
+        content: '';
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        bottom: -80px;
+        left: -60px;
+    }
+
+    .brand-mark {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 15px;
+        letter-spacing: 0.2px;
+        z-index: 1;
+    }
+
+    .brand-mark .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        background: #6f8cff;
+    }
+
+    .brand-copy { z-index: 1; }
+
+    .brand-copy h2 {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.3;
+        margin: 0 0 14px;
+    }
+
+    .brand-copy p {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+        margin: 0;
+        max-width: 300px;
+    }
+
+    .brand-foot {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.45);
+        z-index: 1;
+    }
+
+    .form-panel {
+        padding: 48px 44px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .tabs {
+        position: relative;
+        display: flex;
+        background: #f1f2f7;
+        border-radius: 10px;
+        padding: 4px;
+        margin-bottom: 32px;
+    }
+
+    .tab-indicator {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        left: 4px;
+        width: calc(50% - 4px);
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(20, 30, 60, 0.1);
+        transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    }
+
+    .tab-indicator.register { transform: translateX(100%); }
+
+    .tab-btn {
+        flex: 1;
+        position: relative;
+        z-index: 1;
+        background: none;
+        border: none;
+        padding: 10px;
+        font-family: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #8992a6;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .tab-btn.active { color: #273a6b; }
+
+    .flash-msg {
+        background: #e4f7ee;
+        color: #1c8a5a;
+        border: 1px solid #c8ecd9;
+        padding: 10px 24px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .form-stage {
+    position: relative;
+      transition: height 0.35s ease;
+    }
+
+    .form-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .form-container.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .form-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #161e33;
+        margin: 0 0 6px;
+    }
+
+    .form-subtitle {
+        font-size: 13px;
+        color: #8992a6;
+        margin: 0 0 26px;
+    }
+
+    label {
+        display: block;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #4a5468;
+        margin: 16px 0 6px;
+    }
+
+    label:first-of-type { margin-top: 0; }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid #e4e6ef;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 14px;
+        background: #fbfbfd;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #3454a8;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(52, 84, 168, 0.1);
+    }
+
+    .form-error {
+      background: #fdecea;
+      color: #c0392b;
+      border: 1px solid #f5c6c1;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12.5px;
+      margin-bottom: 14px;
+    }
+
+    .password-hints {
+        list-style: none;
+        margin: 10px 0 0;
+        padding: 0;
+        font-size: 11.5px;
+        color: #9aa2b4;
+        line-height: 1.8;
+    }
+
+    .password-hints li { transition: color 0.2s ease; }
+    .password-hints li.met { color: #1c8a5a; }
+    .hint-icon { display: inline-block; width: 14px; }
+    .password-hints li.met .hint-icon::before { content: '✓'; }
+    .password-hints li:not(.met) .hint-icon::before { content: '○'; color: #c7cce0; }
+
+    .flash-msg {
+        background: #e4f7ee;
+        color: #1c8a5a;
+        border: 1px solid #c8ecd9;
+        padding: 10px 24px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        background: #273a6b;
+        color: #fff;
+        padding: 13px;
+        margin-top: 26px;
+        border: none;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 14.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    button[type="submit"]:hover { background: #1c2b52; transform: translateY(-1px); }
+    button[type="submit"]:active { transform: translateY(0); }
+
+    @media (max-width: 720px) {
+        .shell { grid-template-columns: 1fr; }
+        .brand-panel { display: none; }
+        .form-panel { padding: 40px 28px; }
+    }
+</style>
+</head>
+<body>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="flash-msg">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+<div class="shell">
+    <div class="brand-panel">
+        <div class="brand-mark"><span class="dot"></span> Discount Management System</div>
+        <div class="brand-copy">
+            <h2>Manage every discount from one place.</h2>
+            <p>Create rules, issue coupons, and track usage — built for teams that run frequent promotions.</p>
+        </div>
+        <div class="brand-foot">Software Engineering Activity &middot; Batch-1</div>
+    </div>
+
+    <div class="form-panel">
+        <div class="tabs">
+            <div class="tab-indicator" id="tab-indicator"></div>
+            <button type="button" class="tab-btn active" id="tab-login" onclick="showForm('login')">Login</button>
+            <button type="button" class="tab-btn" id="tab-register" onclick="showForm('register')">Register</button>
+        </div>
+
+        <div class="form-stage" id="form-stage">
+            <div id="login-form" class="form-container active">
+                <h3 class="form-title">Welcome back</h3>
+                <p class="form-subtitle">Sign in to manage or apply discounts.</p>
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <label for="{{ login_form.username.id_for_label }}">Username</label>
+                    {% if login_form.non_field_errors %}
+                      <div class="form-error">{{ login_form.non_field_errors.0 }}</div>
+                   {% endif %}
+                    {{ login_form.username }}
+                    <label for="{{ login_form.password.id_for_label }}">Password</label>
+                    {{ login_form.password }}
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+
+            <div id="register-form" class="form-container">
+                <h3 class="form-title">Create an account</h3>
+                <p class="form-subtitle">Register to start applying discounts.</p>
+                <form method="post" action="{% url 'register' %}">
+                    {% csrf_token %}
+                    <label for="{{ register_form.username.id_for_label }}">Username</label>
+                    {{ register_form.username }}
+                    <label for="{{ register_form.password1.id_for_label }}">Password</label>
+                    {{ register_form.password1 }}
+                    <ul class="password-hints" id="password-hints">
+                        <li data-rule="length"><span class="hint-icon">○</span> At least 8 characters</li>
+                        <li data-rule="numeric"><span class="hint-icon">○</span> Not entirely numeric</li>
+                    </ul>
+                    <label for="{{ register_form.password2.id_for_label }}">Confirm Password</label>
+                    {{ register_form.password2 }}
+                    <button type="submit">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function setStageHeight(id) {
+    const stage = document.getElementById('form-stage');
+    const target = document.getElementById(id);
+    stage.style.height = target.scrollHeight + 'px';
+}
+
+function showForm(which) {
+    document.getElementById('login-form').classList.toggle('active', which === 'login');
+    document.getElementById('register-form').classList.toggle('active', which === 'register');
+    document.getElementById('tab-login').classList.toggle('active', which === 'login');
+    document.getElementById('tab-register').classList.toggle('active', which === 'register');
+    document.getElementById('tab-indicator').classList.toggle('register', which === 'register');
+    setStageHeight(which + '-form');
+}
+
+window.addEventListener('DOMContentLoaded', () => setStageHeight('login-form'));
+
+const pw1 = document.getElementById('{{ register_form.password1.id_for_label }}');
+const username = document.getElementById('{{ register_form.username.id_for_label }}');
+
+function checkPasswordRules() {
+    const value = pw1.value;
+    const uname = username.value.toLowerCase();
+
+    document.querySelector('[data-rule="length"]').classList.toggle('met', value.length >= 8);
+    document.querySelector('[data-rule="numeric"]').classList.toggle('met', value.length > 0 && !/^\d+$/.test(value));
+    
+}
+
+pw1.addEventListener('input', checkPasswordRules);
+username.addEventListener('input', checkPasswordRules);
+</script>
