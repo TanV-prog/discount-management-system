@@ -10,6 +10,21 @@
     * { box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; margin: 0; background: #f4f5f9; }
 
+    @media (max-width: 640px) {
+        .navbar {
+            flex-wrap: wrap;
+            row-gap: 10px;
+            padding: 12px 18px;
+        }
+        .navbar .nav-links {
+            flex-wrap: wrap;
+            gap: 14px;
+            row-gap: 8px;
+        }
+        .navbar .brand {
+            font-size: 13.5px;
+        }
+    }
     .flash-msg {
         background: #e4f7ee;
         color: #1c8a5a;

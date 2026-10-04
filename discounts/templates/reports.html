@@ -2,6 +2,21 @@
 {% block title %}Reports — Discount Management System{% endblock %}
 
 {% block extra_style %}
+
+    @media (max-width: 640px) {
+        .section table {
+         display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .stats {
+            grid-template-columns: 1fr;
+        }
+        .page {
+            padding: 24px 16px 60px;
+        }
+    }
+
     .page {
         max-width: 1040px;
         margin: 0 auto;

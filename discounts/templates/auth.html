@@ -13,10 +13,24 @@
         font-family: 'Inter', sans-serif;
         margin: 0;
         min-height: 100vh;
+        background: #f4f5f9;
+    }
+
+    .flash-msg {
+        background: #e4f7ee;
+        color: #1c8a5a;
+        border: 1px solid #c8ecd9;
+        padding: 10px 24px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .center-wrap {
+        min-height: calc(100vh - 48px);
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #f4f5f9;
         padding: 24px;
     }
 
@@ -152,36 +166,26 @@
 
     .tab-btn.active { color: #273a6b; }
 
-    .flash-msg {
-        background: #e4f7ee;
-        color: #1c8a5a;
-        border: 1px solid #c8ecd9;
-        padding: 10px 24px;
-        font-size: 13px;
-        font-weight: 600;
-        text-align: center;
-    }
-
     .form-stage {
-    position: relative;
-      transition: height 0.35s ease;
+        position: relative;
+        transition: height 0.35s ease;
     }
 
     .form-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(6px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(6px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
     .form-container.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
     }
 
     .form-title {
@@ -226,13 +230,13 @@
     }
 
     .form-error {
-      background: #fdecea;
-      color: #c0392b;
-      border: 1px solid #f5c6c1;
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 12.5px;
-      margin-bottom: 14px;
+        background: #fdecea;
+        color: #c0392b;
+        border: 1px solid #f5c6c1;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 12.5px;
+        margin-bottom: 14px;
     }
 
     .password-hints {
@@ -249,16 +253,6 @@
     .hint-icon { display: inline-block; width: 14px; }
     .password-hints li.met .hint-icon::before { content: '✓'; }
     .password-hints li:not(.met) .hint-icon::before { content: '○'; color: #c7cce0; }
-
-    .flash-msg {
-        background: #e4f7ee;
-        color: #1c8a5a;
-        border: 1px solid #c8ecd9;
-        padding: 10px 24px;
-        font-size: 13px;
-        font-weight: 600;
-        text-align: center;
-    }
 
     button[type="submit"] {
         width: 100%;
@@ -293,61 +287,64 @@
             {% endfor %}
         </div>
     {% endif %}
-<div class="shell">
-    <div class="brand-panel">
-        <div class="brand-mark"><span class="dot"></span> Discount Management System</div>
-        <div class="brand-copy">
-            <h2>Manage every discount from one place.</h2>
-            <p>Create rules, issue coupons, and track usage — built for teams that run frequent promotions.</p>
-        </div>
-        <div class="brand-foot">Software Engineering Activity &middot; Batch-1</div>
-    </div>
 
-    <div class="form-panel">
-        <div class="tabs">
-            <div class="tab-indicator" id="tab-indicator"></div>
-            <button type="button" class="tab-btn active" id="tab-login" onclick="showForm('login')">Login</button>
-            <button type="button" class="tab-btn" id="tab-register" onclick="showForm('register')">Register</button>
-        </div>
-
-        <div class="form-stage" id="form-stage">
-            <div id="login-form" class="form-container active">
-                <h3 class="form-title">Welcome back</h3>
-                <p class="form-subtitle">Sign in to manage or apply discounts.</p>
-                <form method="post" action="{% url 'login' %}">
-                    {% csrf_token %}
-                    <label for="{{ login_form.username.id_for_label }}">Username</label>
-                    {% if login_form.non_field_errors %}
-                      <div class="form-error">{{ login_form.non_field_errors.0 }}</div>
-                   {% endif %}
-                    {{ login_form.username }}
-                    <label for="{{ login_form.password.id_for_label }}">Password</label>
-                    {{ login_form.password }}
-                    <button type="submit">Login</button>
-                </form>
+    <div class="center-wrap">
+        <div class="shell">
+            <div class="brand-panel">
+                <div class="brand-mark"><span class="dot"></span> Discount Management System</div>
+                <div class="brand-copy">
+                    <h2>Manage every discount from one place.</h2>
+                    <p>Create rules, issue coupons, and track usage — built for teams that run frequent promotions.</p>
+                </div>
+                <div class="brand-foot">Software Engineering Activity &middot; Batch-1</div>
             </div>
 
-            <div id="register-form" class="form-container">
-                <h3 class="form-title">Create an account</h3>
-                <p class="form-subtitle">Register to start applying discounts.</p>
-                <form method="post" action="{% url 'register' %}">
-                    {% csrf_token %}
-                    <label for="{{ register_form.username.id_for_label }}">Username</label>
-                    {{ register_form.username }}
-                    <label for="{{ register_form.password1.id_for_label }}">Password</label>
-                    {{ register_form.password1 }}
-                    <ul class="password-hints" id="password-hints">
-                        <li data-rule="length"><span class="hint-icon">○</span> At least 8 characters</li>
-                        <li data-rule="numeric"><span class="hint-icon">○</span> Not entirely numeric</li>
-                    </ul>
-                    <label for="{{ register_form.password2.id_for_label }}">Confirm Password</label>
-                    {{ register_form.password2 }}
-                    <button type="submit">Register</button>
-                </form>
+            <div class="form-panel">
+                <div class="tabs">
+                    <div class="tab-indicator" id="tab-indicator"></div>
+                    <button type="button" class="tab-btn active" id="tab-login" onclick="showForm('login')">Login</button>
+                    <button type="button" class="tab-btn" id="tab-register" onclick="showForm('register')">Register</button>
+                </div>
+
+                <div class="form-stage" id="form-stage">
+                    <div id="login-form" class="form-container active">
+                        <h3 class="form-title">Welcome back</h3>
+                        <p class="form-subtitle">Sign in to manage or apply discounts.</p>
+                        <form method="post" action="{% url 'login' %}">
+                            {% csrf_token %}
+                            <label for="{{ login_form.username.id_for_label }}">Username</label>
+                            {% if login_form.non_field_errors %}
+                                <div class="form-error">{{ login_form.non_field_errors.0 }}</div>
+                            {% endif %}
+                            {{ login_form.username }}
+                            <label for="{{ login_form.password.id_for_label }}">Password</label>
+                            {{ login_form.password }}
+                            <button type="submit">Login</button>
+                        </form>
+                    </div>
+
+                    <div id="register-form" class="form-container">
+                        <h3 class="form-title">Create an account</h3>
+                        <p class="form-subtitle">Register to start applying discounts.</p>
+                        <form method="post" action="{% url 'register' %}">
+                            {% csrf_token %}
+                            <label for="{{ register_form.username.id_for_label }}">Username</label>
+                            {{ register_form.username }}
+                            <label for="{{ register_form.password1.id_for_label }}">Password</label>
+                            {{ register_form.password1 }}
+                            <ul class="password-hints" id="password-hints">
+                                <li data-rule="length"><span class="hint-icon">○</span> At least 8 characters</li>
+                                <li data-rule="numeric"><span class="hint-icon">○</span> Not entirely numeric</li>
+                            </ul>
+                            <label for="{{ register_form.password2.id_for_label }}">Confirm Password</label>
+                            {{ register_form.password2 }}
+                            <button type="submit">Register</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 <script>
 function setStageHeight(id) {
@@ -376,9 +373,10 @@ function checkPasswordRules() {
 
     document.querySelector('[data-rule="length"]').classList.toggle('met', value.length >= 8);
     document.querySelector('[data-rule="numeric"]').classList.toggle('met', value.length > 0 && !/^\d+$/.test(value));
-    
 }
 
 pw1.addEventListener('input', checkPasswordRules);
 username.addEventListener('input', checkPasswordRules);
 </script>
+</body>
+</html>
