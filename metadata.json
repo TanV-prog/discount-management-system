@@ -1,0 +1,8 @@
+{
+  "name": "Discount Management System (DMS)",
+  "description": "Enterprise discount creation, coupon lifecycle management, 7-guard calculation engine, role-based access control, and usage analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
